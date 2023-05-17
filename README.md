@@ -2,7 +2,7 @@
 
 #### Name: [趙子翔]
 #### Student ID: [108703011]
-#### ShinyApps link: [<https://yourname.shinyapps.io/NCCU_DS2023_hw4_studentID/>]
+#### ShinyApps link: [<https://nccu-108703011.shinyapps.io/NCCU_DS2023_hw4_108703011/>]
 
 ## Description
 
