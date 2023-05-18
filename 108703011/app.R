@@ -1,5 +1,7 @@
 library(shiny)
 library(ggbiplot)
+library(ca)
+library(factoextra)
 data(iris)
 
 # Define UI for app that draws a histogram ----
@@ -8,35 +10,39 @@ ui <- fluidPage(
   # App title ----
   titlePanel("NCCU_DS2023_hw4_108703011"),
   
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-    
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-      
-      # Input: Slider for the number of bins ----
-      sliderInput(inputId = "centers",
-                  label = "centers:",
-                  min = 3,
-                  max = 10,
-                  value = 3),
-      
-      selectInput(inputId = "X",
-                  label = "X:",
-                  choices = c("PC1", "PC2", "PC3", "PC4"),
-                  selected = "PC1"),
-      
-      selectInput(inputId = "Y",
-                  label = "Y:",
-                  choices = c("PC1", "PC2", "PC3", "PC4"),
-                  selected = "PC2")
-      
+  tabsetPanel(
+    tabPanel("Correspondence Analysis",
+             sidebarLayout(
+               sidebarPanel(
+                 selectInput(inputId = "X",
+                             label = "X:",
+                             choices = c("PC1", "PC2", "PC3", "PC4"),
+                             selected = "PC1"),
+                 
+                 selectInput(inputId = "Y",
+                             label = "Y:",
+                             choices = c("PC1", "PC2", "PC3", "PC4"),
+                             selected = "PC2")
+               ),
+               mainPanel(
+                 plotOutput(outputId = "pcaPlot")
+               )
+             )
     ),
-    
-    # Main panel for displaying outputs ----
-    mainPanel(
-      plotOutput(outputId = "pcaPlot")
-    )
+    tabPanel("Correspondence Analysis",
+             sidebarLayout(
+               sidebarPanel(
+                 sliderInput(inputId = "centers",
+                             label = "centers:",
+                             min = 3,
+                             max = 10,
+                             value = 3)
+               ),
+               mainPanel(
+                 plotOutput(outputId = "caPlot")
+               )
+             )
+    ),
   )
 )
 
@@ -70,6 +76,14 @@ server <- function(input, output) {
     g <- g + ylab(paste0("PC", y_component))
     
     return(g)
+  })
+  
+  output$caPlot <- renderPlot({
+    # Perform Correspondence Analysis
+    ca <- ca(iris[, 1:4])
+    plot(ca, invisible = "ind")
+    k <- kmeans(iris[, 1:4], centers = input$centers)
+    fviz_cluster(k, data = iris[, 1:4], geom = "point", frame.type = "norm")
   })
   
 }
